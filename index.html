@@ -1,15 +1,123 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Missão — Riscos nas ferramentas manuais | Aluno</title><link rel="stylesheet" href="estilos.css?v=fotos-4"></head>
-<body><main>
-<header class="top"><div><div class="kicker">Montagem de conjuntos mecânicos · Segurança</div><h1>Missão — Riscos nas ferramentas manuais</h1><p class="lead">Observe as três ferramentas e registre o maior número possível de <b>situações plausíveis de acidente</b>. Pense na tarefa, na peça, no ambiente e nas pessoas expostas. As ideias aparecem no painel do instrutor em tempo real.</p></div><span class="smalltag" id="conn">Aguardando conexão</span></header>
-<section class="panel" id="configWarning"><div class="pad alert">Este modelo precisa ser publicado no GitHub Pages e conectado a um projeto Firebase. Veja o arquivo <b>LEIA_PRIMEIRO.md</b> do pacote. Não é necessário instalar aplicativo nos celulares.</div></section>
-<section class="grid" id="main" style="align-items:start"><div>
-<section class="panel"><div class="head"><h2>1. Entrar na turma</h2><span class="tiny">Celular ou computador</span></div><div class="pad"><div class="formline"><div><label for="room">Código da turma</label><input id="room" maxlength="20" placeholder="Ex.: A7KX29QFLR8M" autocomplete="off" style="text-transform:uppercase"></div><div><label for="nickname">Nome curto ou equipe</label><input id="nickname" maxlength="40" placeholder="Ex.: Equipe 4" autocomplete="nickname"></div><button id="join" class="btn gold">Entrar</button></div><p id="joinMsg" class="info" style="margin:12px 0 0">Use apenas um apelido ou identificação da equipe. Não informe dados pessoais sensíveis.</p><div class="success hidden" id="welcome"></div></div></section>
-<section class="panel"><div class="head"><h2>2. Escolha uma ferramenta</h2><span class="tiny">Três desafios</span></div><div class="pad cards" id="toolCards"></div></section>
-<section class="panel"><div class="head"><h2 id="entryTitle">3. Situações ligadas ao martelo</h2><span class="badge" id="countAll">0 registros</span></div><div class="pad"><label for="inputAnswers">Uma situação por linha (pode adicionar várias de uma vez)</label><textarea id="inputAnswers" placeholder="Ex.: O martelo com a cabeça frouxa pode desprender-se durante o golpe.&#10;Ex.: Se a peça não estiver fixada, pode se deslocar e atingir o operador." maxlength="6000" disabled></textarea><div class="actions"><button class="btn gold" id="submit" disabled>Enviar respostas</button><span id="sendStatus" class="info">Entre na turma para registrar.</span></div><div class="tip" style="margin-top:16px"><b>Perguntas para estimular a análise</b><p class="info" style="margin:7px 0 0">O que pode escapar, quebrar, cair, projetar ou prender? Quem pode ser atingido? Que situação favorece o acidente? Que medida preventiva mudaria o resultado?</p></div></div></section>
-</div><div>
-<section class="panel"><div class="head"><h2>Minhas contribuições</h2><span class="badge" id="totalMine">0</span></div><div class="pad"><div class="statrow"><div class="stat"><strong id="c_martelo">0</strong><span>Martelo</span></div><div class="stat"><strong id="c_chave">0</strong><span>Chave de fenda</span></div><div class="stat"><strong id="c_alicate">0</strong><span>Alicate</span></div><div class="stat"><strong id="c_total">0</strong><span>Total</span></div></div><h3 style="margin-top:17px">Registros desta ferramenta</h3><ul class="list" id="mine"><li class="muted">Selecione uma ferramenta e entre na turma.</li></ul></div></section>
-<section class="panel"><div class="head"><h2>Situação da atividade</h2></div><div class="pad"><p><b id="roomState">Aguardando turma</b></p><p class="info" id="phaseHelp">O instrutor pode encerrar a coleta e liberar os exemplos para comparação.</p></div></section>
-</div></section>
-<section class="panel hidden" id="comparison"><div class="head"><h2>Comparação — sugestões de referência</h2><span class="badge">Liberadas pelo instrutor</span></div><div class="pad"><p class="lead">Estes exemplos não são um gabarito exaustivo nem substituem a análise real do risco. Compare com suas ideias: quais situações ficaram de fora? Que controles seriam necessários?</p><div class="refs" id="referenceList"></div></div></section>
-<footer class="footer">Atividade didática. A quantidade de registros não mede a qualidade das análises. Não substitui APR, PGR, procedimentos internos ou autorização para iniciar trabalhos. Os registros são enviados ao banco de dados configurado pelo responsável pela turma.</footer>
-</main><script type="module" src="aluno.js?v=fotos-4"></script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10233a">
+  <meta name="description" content="Atividade interativa de identificação de situações de acidente com ferramentas manuais.">
+  <title>Missão — Riscos nas ferramentas manuais | Aluno</title>
+  <link rel="stylesheet" href="estilos.css?v=aluno-revisao-5">
+</head>
+<body class="student-page">
+<main>
+  <header class="top student-header">
+    <div>
+      <div class="kicker">Montagem de conjuntos mecânicos · Segurança</div>
+      <h1>Missão — Riscos nas ferramentas manuais</h1>
+      <p class="lead">Observe o martelo, a chave de fenda e o alicate universal. Sua tarefa é <strong>identificar o maior número possível de situações que possam provocar acidentes durante o uso dessas ferramentas</strong>.</p>
+      <p class="lead">Considere a ferramenta, a peça trabalhada, a tarefa, o ambiente e as pessoas expostas. Registre suas próprias ideias: os exemplos de referência serão apresentados somente após a liberação do instrutor.</p>
+    </div>
+    <span class="smalltag" id="conn" aria-live="polite">Aguardando entrada na turma</span>
+  </header>
+
+  <section class="student-steps" aria-label="Etapas da atividade">
+    <div class="student-step"><span class="step-circle">1</span><span><b>Entre na turma</b><small>Use o código informado pelo instrutor.</small></span></div>
+    <div class="student-step"><span class="step-circle">2</span><span><b>Observe a ferramenta</b><small>Imagine situações reais de utilização.</small></span></div>
+    <div class="student-step"><span class="step-circle">3</span><span><b>Registre e compare</b><small>Envie suas ideias e participe da discussão.</small></span></div>
+  </section>
+
+  <section class="panel" id="configWarning">
+    <div class="pad alert">Este ambiente ainda precisa ser conectado ao Firebase pelo responsável pelo treinamento. Os alunos não precisam instalar aplicativos.</div>
+  </section>
+
+  <section class="grid student-grid" id="main">
+    <div>
+      <section class="panel" id="joinPanel" aria-labelledby="joinTitle">
+        <div class="head"><h2 id="joinTitle">1. Entre na turma</h2><span class="tiny">Sem cadastro de e-mail</span></div>
+        <div class="pad">
+          <p class="student-section-intro">Informe o código fornecido pelo instrutor e uma identificação curta. Você pode usar um apelido ou o nome da equipe.</p>
+          <div class="formline">
+            <div><label for="room">Código da turma</label><input id="room" maxlength="20" placeholder="Ex.: A7KX29QFLR8M" autocomplete="off" autocapitalize="characters" spellcheck="false" style="text-transform:uppercase"></div>
+            <div><label for="nickname">Apelido ou equipe</label><input id="nickname" maxlength="40" placeholder="Ex.: Equipe 4" autocomplete="nickname"></div>
+            <button id="join" class="btn gold" type="button">Entrar na turma</button>
+          </div>
+          <p id="joinMsg" class="info student-feedback" role="status" aria-live="polite">Use apenas uma identificação curta. Não informe CPF, matrícula, telefone ou outros dados pessoais sensíveis.</p>
+          <div class="success hidden" id="welcome" role="status"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="toolsPanel" aria-labelledby="toolsTitle">
+        <div class="head"><h2 id="toolsTitle">2. Escolha a ferramenta</h2><span class="tiny">Analise as três ferramentas</span></div>
+        <div class="pad">
+          <p class="student-section-intro">Toque ou clique em uma ferramenta para selecioná-la. Você poderá alternar entre elas sem perder os registros enviados.</p>
+          <div class="cards" id="toolCards" role="group" aria-label="Ferramentas disponíveis"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="entryPanel" aria-labelledby="entryTitle">
+        <div class="head">
+          <h2 id="entryTitle">3. Registre situações: martelo</h2>
+          <span class="badge" id="countAll">0 registros</span>
+        </div>
+        <div class="pad">
+          <p class="student-section-intro"><b>O que poderia acontecer durante o uso desta ferramenta?</b> Não é necessário calcular a probabilidade do acidente; primeiro, procure reconhecer diferentes situações possíveis.</p>
+          <div class="tip student-writing-guide">
+            <b>Como descrever uma situação</b>
+            <p class="info">Use a estrutura: <strong>condição ou ação → o que pode acontecer → possível consequência para alguém</strong>.</p>
+            <p class="info student-prompt" id="toolPrompt">Pense no manuseio da ferramenta, no estado da peça e nas pessoas próximas.</p>
+          </div>
+          <label for="inputAnswers">Escreva uma situação por linha</label>
+          <textarea id="inputAnswers" rows="5" maxlength="6000" placeholder="Descreva uma situação por linha, com suas próprias palavras.&#10;Exemplo de estrutura: Se [condição], pode ocorrer [evento], causando [consequência]." aria-describedby="inputHelp" disabled></textarea>
+          <p id="inputHelp" class="info student-limit">Você pode escrever várias linhas e enviá-las juntas. Limite: 30 situações por ferramenta e 190 caracteres por linha. Evite repetir a mesma ideia com outras palavras.</p>
+          <div class="actions student-send-actions">
+            <button class="btn gold" id="submit" type="button" disabled>Enviar situações</button>
+            <span id="sendStatus" class="info" aria-live="polite">Entre na turma para começar.</span>
+          </div>
+          <div id="entryFeedback" class="hidden" role="status" aria-live="polite"></div>
+          <div class="tip student-reflection">
+            <b>Perguntas para ampliar sua análise</b>
+            <p class="info">O que pode escorregar, quebrar, cair, prender ou ser projetado? Quem pode ser atingido? O que poderia causar a perda de controle? Qual medida ajudaria a evitar o acidente?</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside aria-label="Acompanhamento da participação">
+      <section class="panel">
+        <div class="head"><h2>Minhas contribuições</h2><span class="badge" id="totalMine">0</span></div>
+        <div class="pad">
+          <p class="student-section-intro">Acompanhe a quantidade de situações registradas. A contagem ajuda na dinâmica, mas a pertinência das respostas é mais importante do que o número total.</p>
+          <div class="statrow">
+            <div class="stat"><strong id="c_martelo">0</strong><span>Martelo</span></div>
+            <div class="stat"><strong id="c_chave">0</strong><span>Chave de fenda</span></div>
+            <div class="stat"><strong id="c_alicate">0</strong><span>Alicate universal</span></div>
+            <div class="stat"><strong id="c_total">0</strong><span>Total</span></div>
+          </div>
+          <h3 class="student-list-title">Respostas da ferramenta selecionada</h3>
+          <ul class="list" id="mine"><li class="muted">Entre na turma para registrar suas ideias.</li></ul>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="head"><h2>Etapa da atividade</h2></div>
+        <div class="pad">
+          <p><b id="roomState">Aguardando turma</b></p>
+          <p class="info" id="phaseHelp">O instrutor informará quando encerrar os registros e liberar os exemplos para comparação.</p>
+        </div>
+      </section>
+    </aside>
+  </section>
+
+  <section class="panel hidden" id="comparison">
+    <div class="head"><h2>4. Compare suas ideias com os exemplos</h2><span class="badge">Liberados pelo instrutor</span></div>
+    <div class="pad">
+      <p class="student-section-intro">As sugestões são exemplos para discussão, <strong>não um gabarito completo</strong>. Compare com suas respostas: que situações você identificou? Quais não havia considerado? Que medidas de prevenção poderiam ser adotadas?</p>
+      <div class="refs" id="referenceList"></div>
+    </div>
+  </section>
+
+  <footer class="footer">Atividade didática de identificação de perigos e possíveis acidentes. O número de respostas não representa uma avaliação completa de riscos. A atividade não substitui a APR, o PGR, os procedimentos internos nem as autorizações de trabalho. As respostas são armazenadas no banco de dados configurado pelo responsável pela turma.</footer>
+</main>
+<script type="module" src="aluno.js?v=aluno-revisao-5"></script>
+</body>
+</html>
