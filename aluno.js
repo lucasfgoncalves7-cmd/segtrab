@@ -7,20 +7,46 @@ const $ = (s) => document.getElementById(s);
 const keys = Object.keys(ferramentas);
 let roomId='', user=null, name='', current='martelo', state=null, unsubRoom=null, unsubSelf=null, sending=false;
 let answers={martelo:[],chave:[],alicate:[]};
-const originalText=$('inputAnswers').placeholder;
+const toolPrompts = {
+  martelo: 'Martelo: considere a estabilidade da peça, o estado da ferramenta, a posição das mãos e a área ao redor.',
+  chave: 'Chave de fenda: considere o encaixe da ponta, a direção da força, o apoio da peça e possíveis energias presentes.',
+  alicate: 'Alicate universal: considere o esforço aplicado, o material manuseado, o posicionamento das mãos e as partes cortantes.'
+};
 
-function status(text,kind='info') { $('joinMsg').className=kind==='error'?'error':kind==='success'?'success':'info'; $('joinMsg').textContent=text; }
+function status(text,kind='info') {
+  $('joinMsg').className=kind==='error'?'error':kind==='success'?'success':'info';
+  $('joinMsg').textContent=text;
+}
+function entryNotice(text,kind='info') {
+  const el=$('entryFeedback');
+  el.className=kind==='error'?'error':kind==='success'?'success':'info';
+  el.textContent=text;
+}
 function isOpen(){return !!state?.open;}
-function cleanText(s){return String(s??'').trim().replace(/\s+/g,' ').slice(0,190);}
+function cleanText(s){return String(s??'').trim().replace(/\s+/g,' ');}
 function totalCount(){return keys.reduce((n,k)=>n+answers[k].length,0);}
 function renderTools(){
  const root=$('toolCards');root.replaceChildren();
  keys.forEach(k=>{
-  const t=ferramentas[k],b=document.createElement('button'); b.className='tool'+(current===k?' active':'');b.type='button';
-  const visual=document.createElement('span');visual.className='tool-media tool-media-'+k;visual.setAttribute('role','img');visual.setAttribute('aria-label','Fotografia de '+t.nome.toLowerCase());b.append(visual);
+  const t=ferramentas[k], b=document.createElement('button');
+  b.className='tool'+(current===k?' active':'');
+  b.type='button';b.disabled=sending;
+  b.setAttribute('aria-pressed',String(current===k));
+  b.setAttribute('aria-label',t.nome+(current===k?', selecionada':', selecionar ferramenta'));
+  const visual=document.createElement('span');
+  visual.className='tool-media tool-media-'+k;
+  visual.setAttribute('role','img');
+  visual.setAttribute('aria-label', k==='martelo'?'Imagem de um martelo de unha':k==='chave'?'Imagem de uma chave de fenda reta':'Imagem de um alicate universal');
   const strong=document.createElement('strong');strong.textContent=t.nome;
-  const small=document.createElement('small');small.textContent=`${answers[k].length} situações registradas`;
-  b.append(strong,small);b.addEventListener('click',()=>{current=k;render();});root.append(b);
+  const small=document.createElement('small');
+  const count=answers[k].length;
+  small.textContent=count+' '+(count===1?'situação registrada':'situações registradas')+(current===k?' · selecionada':'');
+  b.append(visual,strong,small);
+  b.addEventListener('click',()=>{
+    if(sending||current===k)return;
+    current=k;$('entryFeedback').className='hidden';render();
+  });
+  root.append(b);
  });
 }
 function renderMyList(){
@@ -28,8 +54,8 @@ function renderMyList(){
  if(!answers[current].length){const li=document.createElement('li');li.textContent='Nenhuma situação nesta ferramenta.';ul.append(li);return;}
  answers[current].forEach((value,i)=>{
   const li=document.createElement('li'),text=document.createElement('span');text.textContent=value;li.append(text);
-  if(isOpen()&&user){const btn=document.createElement('button');btn.textContent='Retirar';btn.title='Excluir esta resposta';btn.disabled=sending;
-   btn.onclick=()=>mutate([...answers[current].filter((_,j)=>j!==i)],'Registro excluído.');li.append(btn);}
+  if(isOpen()&&user){const btn=document.createElement('button');btn.textContent='Excluir';btn.title='Excluir esta situação registrada';btn.disabled=sending;
+   const toolKey=current;btn.onclick=()=>mutate(answers[toolKey].filter((_,j)=>j!==i),'Registro excluído.',toolKey);li.append(btn);}
   ul.append(li);
  });
 }
@@ -43,39 +69,60 @@ function renderReferences(){
 function render(){
  renderTools(); renderMyList();
  keys.forEach(k=>{$('c_'+k).textContent=answers[k].length;});
- $('totalMine').textContent=totalCount();$('c_total').textContent=totalCount();$('countAll').textContent=`${answers[current].length} registros`;
- $('entryTitle').textContent=`3. Situações ligadas a ${current==='alicate'?'o alicate universal':current==='chave'?'a chave de fenda':'o martelo'}`;
+ $('totalMine').textContent=totalCount();$('c_total').textContent=totalCount();
+ const count=answers[current].length;
+ $('countAll').textContent=count+' '+(count===1?'registro':'registros');
+ $('entryTitle').textContent='3. Registre situações: '+ferramentas[current].nome.toLowerCase();
+ $('toolPrompt').textContent=toolPrompts[current];
  $('inputAnswers').disabled=!user||!isOpen()||sending;
  $('submit').disabled=!user||!isOpen()||sending;
- $('roomState').textContent=(!state?'Aguardando turma':state.open?'Coleta aberta':'Coleta encerrada');
- $('phaseHelp').textContent=state?.revealed?'Sugestões liberadas: veja a seção de comparação.':
-   'As sugestões aparecem após a liberação do instrutor.';
- $('sendStatus').textContent=!user?'Entre na turma para registrar.':!isOpen()?'O instrutor encerrou a coleta.':'Até 30 respostas por ferramenta, com até 190 caracteres cada.';
- $('conn').textContent=!state?'Aguardando turma':(state.open?'Conectado · coleta aberta':'Conectado · encerrada');
+ $('roomState').textContent=!state?'Aguardando turma':state.open?'Coleta aberta':'Coleta encerrada';
+ $('phaseHelp').textContent=state?.revealed?
+   'Os exemplos estão liberados na seção de comparação, ao final desta página.':
+   !state?'Entre em uma turma para acompanhar a atividade.':
+   state.open?'Envie suas ideias. O instrutor informará quando encerrar a coleta e liberar os exemplos.':
+   'A coleta foi encerrada. Aguarde a liberação dos exemplos pelo instrutor.';
+ $('sendStatus').textContent=sending?'Salvando seus registros...':
+   !user?'Entre na turma para registrar suas ideias.':
+   !isOpen()?'Coleta encerrada: não é possível enviar novos registros.':
+   count+' de 30 situações registradas nesta ferramenta.';
+ $('conn').textContent=!state?'Aguardando entrada na turma':state.open?'Conectado · coleta aberta':'Conectado · coleta encerrada';
  renderReferences();
 }
-async function mutate(newList,after){
- if(!user||!roomId||!isOpen()||sending)return;
+async function mutate(newList,after,toolKey=current){
+ if(!user||!roomId||!isOpen()||sending)return false;
  sending=true;render();
- const next={...answers,[current]:newList};
+ const next={...answers,[toolKey]:newList};
  try{
   await setDoc(doc(db,'rooms',roomId,'participants',user.uid),{
    uid:user.uid,name,answers:next,updatedAt:serverTimestamp()
   });
-  answers=next;$('sendStatus').textContent=after||'Respostas registradas.';
- }catch(e){console.error(e);status('Não foi possível salvar. Confira a conexão, se a coleta continua aberta e as regras do Firebase.','error');}
- finally{sending=false;render();}
+  answers=next;entryNotice(after||'Registros salvos.','success');
+  return true;
+ }catch(e){
+  console.error(e);
+  entryNotice('Não foi possível salvar. Verifique sua conexão e se a coleta continua aberta. Seus textos permanecem no campo para nova tentativa.','error');
+  return false;
+ }finally{sending=false;render();}
 }
 async function addAnswers(){
  if(!isOpen()||!user||sending)return;
- const raw=$('inputAnswers').value.split(/\n/).map(cleanText).filter(Boolean);
- if(!raw.length){status('Digite pelo menos uma situação.','error');return;}
- const unique=[]; const seen=new Set(answers[current].map(s=>s.toLocaleLowerCase('pt-BR')));
- for(const r of raw){const key=r.toLocaleLowerCase('pt-BR');if(!seen.has(key)){unique.push(r);seen.add(key);}}
- if(!unique.length){status('Essas situações já estão em sua lista.','error');return;}
- if(unique.length+answers[current].length>30){status('O limite é de 30 situações por ferramenta. Envie menos linhas.','error');return;}
- await mutate([...answers[current],...unique],`${unique.length} situação(ões) adicionada(s).`);
- if(!sending&&answers[current].some(x=>unique.includes(x)))$('inputAnswers').value='';
+ const toolKey=current;
+ const raw=$('inputAnswers').value.split(/\r?\n/).map(cleanText).filter(Boolean);
+ if(!raw.length){entryNotice('Escreva pelo menos uma situação antes de enviar.','error');return;}
+ const tooLong=raw.findIndex(x=>x.length>190);
+ if(tooLong>=0){entryNotice('A linha '+(tooLong+1)+' tem mais de 190 caracteres. Resuma essa situação sem perder o sentido.','error');return;}
+ const unique=[],seen=new Set(answers[toolKey].map(x=>x.toLocaleLowerCase('pt-BR').replace(/[.!?]+$/,'')));
+ for(const value of raw){
+  const norm=value.toLocaleLowerCase('pt-BR').replace(/[.!?]+$/,'');
+  if(!seen.has(norm)){unique.push(value);seen.add(norm);}
+ }
+ if(!unique.length){entryNotice('Essas situações já foram registradas. Descreva ideias diferentes.','error');return;}
+ if(unique.length+answers[toolKey].length>30){
+  entryNotice('Você pode registrar até 30 situações por ferramenta. Envie menos linhas ou revise sua lista.','error');return;
+ }
+ const success=await mutate([...answers[toolKey],...unique],unique.length+' '+(unique.length===1?'situação registrada com sucesso.':'situações registradas com sucesso.'),toolKey);
+ if(success){$('inputAnswers').value='';}
 }
 function onRoomChange(snapshot){
  if(!snapshot.exists()){status('Turma não encontrada. Confira o código.','error');return;}
@@ -105,8 +152,8 @@ async function join(){
   user=currentUser;name=enteredName;roomId=requested;answers=initial;
   unsubRoom=onSnapshot(doc(db,'rooms',roomId),onRoomChange,e=>status('Falha ao receber a situação da turma: '+e.message,'error'));
   unsubSelf=onSnapshot(self,s=>{if(s.exists()){const a=s.data().answers||{};answers={martelo:a.martelo||[],chave:a.chave||[],alicate:a.alicate||[]};render();}},e=>status('Falha de sincronização: '+e.message,'error'));
-  $('welcome').classList.remove('hidden');$('welcome').textContent=`Participação ativa: ${name} · Turma ${roomId}`;
-  status(d.data().open?'Você entrou na atividade. Registre suas ideias nas ferramentas.':'Você entrou para consultar seus registros e a comparação liberada pelo instrutor.','success');
+  $('welcome').classList.remove('hidden');$('welcome').textContent=`Você entrou na turma: ${name} · Código ${roomId}`;
+  status(d.data().open?'Entrada confirmada. Selecione uma ferramenta e registre suas ideias.':'Entrada confirmada. Você pode consultar seus registros e os exemplos que o instrutor liberar.','success');
   localStorage.setItem('ferramentas-aluno-nome',name);render();
  }catch(e){console.error(e);status(e.message||'Não foi possível entrar.','error');}
  finally{$('join').disabled=false;}
