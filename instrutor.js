@@ -1,6 +1,6 @@
 import { auth, db, configured } from './firebase.js';
 import { ferramentas, sugestoes } from './sugestoes.js';
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js';
+import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js';
 import { doc, collection, setDoc, getDoc, serverTimestamp, onSnapshot, updateDoc } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 
 const $=id=>document.getElementById(id);
@@ -52,8 +52,8 @@ function renderSuggestions(){const root=$('teacherReferences');root.replaceChild
  const ol=document.createElement('ol');for(const s of sugestoes[k]){const li=document.createElement('li');li.textContent=s;ol.append(li);}card.append(h,ol);root.append(card);}}
 async function login(){if(!configured){showMsg('loginStatus','Preencha firebase-config.js e publique as regras no Firebase.','error');return;}
  $('login').disabled=true;
- try{await signInWithEmailAndPassword(auth,$('email').value.trim(),$('password').value);$('password').value='';}
- catch(e){console.error(e);showMsg('loginStatus','Falha de autenticação. Confira o e-mail, a senha e o provedor E-mail/Senha no Firebase.','error');}
+ try{await signInWithPopup(auth,new GoogleAuthProvider());}
+ catch(e){console.error(e);showMsg('loginStatus','Não foi possível entrar com Google. Ative o provedor Google no Firebase, autorize o domínio publicado e confira se o navegador permite a janela de login.','error');}
  finally{$('login').disabled=false;}}
 function cleanup(){if(unsubRoom)unsubRoom();if(unsubPeople)unsubPeople();unsubRoom=null;unsubPeople=null;}
 async function openRoom(id){
@@ -81,14 +81,14 @@ async function createRoom(){if(!user)return;
   const newId=code();
   await setDoc(doc(db,'rooms',newId),{createdBy:user.uid,createdAt:serverTimestamp(),open:true,revealed:false,title:'Riscos nas ferramentas manuais'});
   await openRoom(newId);
- }catch(e){console.error(e);showMsg('roomMessage','Não foi possível criar. Verifique se o e-mail do instrutor foi autorizado em firestore.rules e se as regras foram publicadas.','error');}
+ }catch(e){console.error(e);showMsg('roomMessage','Não foi possível criar. Verifique se sua conta Google está autorizada nas regras do Firestore e se as regras foram publicadas.','error');}
  finally{$('newRoom').disabled=false;}}
 async function setFlag(field,value){if(!user||!roomId)return;
  try{await updateDoc(doc(db,'rooms',roomId),{[field]:value});}
  catch(e){console.error(e);showMsg('roomMessage','Não foi possível alterar a turma. Verifique sua conexão e as regras.','error');}}
 async function leave(){cleanup();await signOut(auth);location.reload();}
 function updateAuth(u){
- user=u&&!u.isAnonymous?u:null;
+ user=u&&!u.isAnonymous&&u.providerData.some(p=>p.providerId==='google.com')?u:null;
  $('loginPanel').classList.toggle('hidden',!!user);$('dashboard').classList.toggle('hidden',!user);
  if(user){$('teacherName').textContent=user.email; $('conn').textContent='Instrutor autenticado';
   const last=localStorage.getItem('ferramentas-ultima-sala');if(last&&!roomId)openRoom(last);
