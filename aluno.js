@@ -17,7 +17,7 @@ function renderTools(){
  const root=$('toolCards');root.replaceChildren();
  keys.forEach(k=>{
   const t=ferramentas[k],b=document.createElement('button'); b.className='tool'+(current===k?' active':'');b.type='button';
-  const im=new Image();im.src=t.imagem; im.alt=t.nome; b.append(im);
+  const visual=document.createElement('span');visual.className='tool-media tool-media-'+k;visual.setAttribute('role','img');visual.setAttribute('aria-label','Fotografia de '+t.nome.toLowerCase());b.append(visual);
   const strong=document.createElement('strong');strong.textContent=t.nome;
   const small=document.createElement('small');small.textContent=`${answers[k].length} situações registradas`;
   b.append(strong,small);b.addEventListener('click',()=>{current=k;render();});root.append(b);
