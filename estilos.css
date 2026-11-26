@@ -9,3 +9,8 @@ label{display:block;color:#e5f1fa;font-size:14px;font-weight:700;margin-bottom:7
 @media(max-width:970px){.grid{grid-template-columns:1fr}.refs{grid-template-columns:1fr 1fr}.kpis{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){main{padding:15px 11px 28px}.top{display:block}.smalltag{display:inline-block;margin-top:9px}.cards{grid-template-columns:1fr;gap:12px}.tool img{height:190px;padding:6px}.tool strong{font-size:12px;padding:8px}.tool small{font-size:11px;padding:0 8px 8px}.refs{grid-template-columns:1fr}.statrow{grid-template-columns:repeat(2,1fr)}}
 @media print{body{background:white;color:black}.panel,.card,.stat{background:white;color:black;box-shadow:none;border-color:#aaa}.top .smalltag,.actions,.hide-print{display:none!important}main{max-width:none;padding:0}}
+
+/* Fotografias em proporção real, sem cortes: cada cartão mostra um dos três painéis da imagem. */
+.tool-media{display:block;width:100%;aspect-ratio:1/1;background-color:#0b2741;background-image:url('assets/ferramentas-reais.webp');background-size:300% 100%;background-repeat:no-repeat;background-position:left center}
+.tool-media-chave{background-position:center center}
+.tool-media-alicate{background-position:right center}
