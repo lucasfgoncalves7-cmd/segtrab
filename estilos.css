@@ -14,3 +14,67 @@ label{display:block;color:#e5f1fa;font-size:14px;font-weight:700;margin-bottom:7
 .tool-media{display:block;width:100%;aspect-ratio:1/1;background-color:#0b2741;background-image:url('assets/ferramentas-reais.webp');background-size:300% 100%;background-repeat:no-repeat;background-position:left center}
 .tool-media-chave{background-position:center center}
 .tool-media-alicate{background-position:right center}
+
+
+/* Ajustes pedagógicos e responsivos exclusivos da página do aluno — revisão 5. */
+.student-page .student-header .lead{margin-bottom:10px;line-height:1.5}
+.student-page .student-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 18px}
+.student-page .student-step{display:flex;align-items:center;gap:12px;background:#142b43;border:1px solid #45637b;border-radius:13px;padding:13px 15px;min-width:0}
+.student-page .step-circle{display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;border-radius:50%;background:#e7ba65;color:#1e2430;font-weight:900}
+.student-page .student-step b{display:block;font-size:14px;line-height:1.25}
+.student-page .student-step small{display:block;margin-top:3px;color:#c1d3e4;font-size:12px;line-height:1.35}
+.student-page .student-grid{align-items:start}
+.student-page .student-section-intro{font-size:14px;line-height:1.55;color:#d3e2ef;margin:0 0 15px}
+.student-page .student-writing-guide{margin:0 0 16px}
+.student-page .student-writing-guide .info{margin:7px 0 0;line-height:1.55}
+.student-page .student-writing-guide strong{color:#f6e2a8}
+.student-page .student-prompt{color:#d1e4f2}
+.student-page .student-limit{margin:8px 0 0;line-height:1.5}
+.student-page .student-send-actions{align-items:center}
+.student-page .student-send-actions .info{flex:1;min-width:180px}
+.student-page .student-reflection{margin-top:18px}
+.student-page .student-reflection .info{margin:7px 0 0;line-height:1.5}
+.student-page .student-list-title{margin:18px 0 9px}
+.student-page .student-feedback{margin:12px 0 0}
+.student-page #entryFeedback{margin-top:12px}
+.student-page #entryFeedback:not(.hidden){display:block}
+.student-page .tool{transition:border-color .15s,box-shadow .15s;background:#1b3958}
+.student-page .tool:hover:not(:disabled){border-color:#93d9f3}
+.student-page .tool:focus-visible,.student-page .btn:focus-visible{outline:3px solid #94dafa;outline-offset:3px}
+.student-page .tool:disabled{cursor:wait}
+.student-page .tool strong{font-size:16px}
+.student-page .tool small{font-size:12px;line-height:1.4;min-height:28px}
+.student-page .statrow{grid-template-columns:repeat(2,minmax(0,1fr))}
+.student-page .stat{min-width:0}
+.student-page .stat span{line-height:1.35}
+.student-page #mine li{line-height:1.5}
+.student-page #mine li button{flex:0 0 auto}
+.student-page #comparison{scroll-margin-top:20px}
+.student-page #joinPanel,.student-page #toolsPanel,.student-page #entryPanel{scroll-margin-top:14px}
+@media(max-width:970px){
+ .student-page .student-steps{grid-template-columns:1fr}
+ .student-page .student-step{padding:10px 13px}
+}
+@media(max-width:600px){
+ .student-page main{padding:16px 12px 32px}
+ .student-page .top h1{font-size:29px;line-height:1.1}
+ .student-page .student-header .lead{font-size:14px}
+ .student-page .student-step small{font-size:12px}
+ .student-page .pad{padding:14px}
+ .student-page .head{padding:12px 14px;align-items:flex-start}
+ .student-page .head h2{font-size:18px}
+ .student-page .cards{grid-template-columns:1fr;gap:10px}
+ .student-page .tool{display:grid;grid-template-columns:112px minmax(0,1fr);grid-template-rows:1fr 1fr;min-height:112px;align-items:stretch}
+ .student-page .tool-media{grid-row:1/3;grid-column:1;aspect-ratio:1/1;width:112px;height:112px}
+ .student-page .tool strong{grid-row:1;grid-column:2;align-self:end;font-size:16px;padding:8px 11px 2px}
+ .student-page .tool small{grid-row:2;grid-column:2;align-self:start;font-size:12px;line-height:1.45;padding:1px 11px 8px;min-height:0}
+ .student-page .formline #join{width:100%}
+ .student-page .student-send-actions #submit{width:100%}
+ .student-page .stat strong{font-size:24px}
+ .student-page .list li{font-size:14px}
+ .student-page textarea{min-height:135px}
+}
+@media(max-width:350px){
+ .student-page .tool{grid-template-columns:95px minmax(0,1fr);min-height:95px}
+ .student-page .tool-media{height:95px;width:95px}
+}
