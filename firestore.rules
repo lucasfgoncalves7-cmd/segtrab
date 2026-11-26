@@ -2,12 +2,13 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ALTERE PELO E-MAIL EXATO DO INSTRUTOR CADASTRADO EM AUTHENTICATION.
-    // A senha do instrutor NUNCA deve aparecer no GitHub.
+    // Substitua o e-mail abaixo pela sua conta Google no console do Firestore.
+    // Não publique credenciais privadas ou senhas no repositório.
     function isTeacher() {
       return request.auth != null
-        && request.auth.token.email == 'INSTRUTOR@EXEMPLO.COM'
-        && request.auth.token.firebase.sign_in_provider == 'password';
+        && request.auth.token.email == 'SEU_EMAIL_GOOGLE@EXEMPLO.COM'
+        && request.auth.token.email_verified == true
+        && request.auth.token.firebase.sign_in_provider == 'google.com';
     }
 
     function isStudent() {
