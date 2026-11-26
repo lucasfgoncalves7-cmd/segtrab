@@ -1,0 +1,24 @@
+MISSÃO — RISCOS NAS FERRAMENTAS MANUAIS
+VERSÃO ONLINE PARA GITHUB PAGES + FIREBASE
+
+1) Acesse https://console.firebase.google.com/ e crie um projeto e um aplicativo Web.
+2) No Firebase, ative Authentication: Anonymous (alunos) e Email/Password (instrutor).
+   Em Authentication -> Users, cadastre a conta do instrutor.
+3) Crie o Firestore Database. Na guia Rules, cole o conteúdo de firestore.rules,
+   trocando INSTRUTOR@EXEMPLO.COM pelo e-mail exato do instrutor. Publique as regras.
+4) Em firebase-config.js, substitua os quatro valores pelo objeto Web mostrado
+   no console Firebase (apiKey, authDomain, projectId, appId).
+5) No GitHub, crie um repositório e envie OS ARQUIVOS DENTRO DESTA PASTA
+   (index.html, instrutor.html, JS, CSS, assets, etc.) para a raiz.
+6) No repositório, abra Settings -> Pages -> Deploy from a branch -> main -> /(root).
+   O GitHub mostrará o endereço do site quando a publicação estiver disponível.
+7) Abra SEU_SITE/instrutor.html, faça login e clique Criar nova turma.
+   Copie o link de aluno e compartilhe. Os celulares podem usar dados móveis.
+
+ATENÇÃO: NÃO publique a senha do instrutor nem credenciais privadas.
+A apiKey do Firebase para Web é pública e NÃO substitui regras de segurança.
+
+IMPORTANTE: este pacote é PRONTO PARA CONFIGURAR E PUBLICAR; ainda NÃO está
+hospedado e NÃO foi testado com um Firebase real, pois precisa do seu projeto.
+
+Para mais detalhes e soluções de problemas, veja README.md.

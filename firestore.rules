@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ALTERE PELO E-MAIL EXATO DO INSTRUTOR CADASTRADO EM AUTHENTICATION.
+    // A senha do instrutor NUNCA deve aparecer no GitHub.
+    function isTeacher() {
+      return request.auth != null
+        && request.auth.token.email == 'INSTRUTOR@EXEMPLO.COM'
+        && request.auth.token.firebase.sign_in_provider == 'password';
+    }
+
+    function isStudent() {
+      return request.auth != null
+        && request.auth.token.firebase.sign_in_provider == 'anonymous';
+    }
+
+    function validAnswers(a) {
+      return a is map
+        && a.keys().hasOnly(['martelo', 'chave', 'alicate'])
+        && a.keys().hasAll(['martelo', 'chave', 'alicate'])
+        && a.martelo is list && a.martelo.size() <= 30
+        && a.chave is list && a.chave.size() <= 30
+        && a.alicate is list && a.alicate.size() <= 30;
+    }
+
+    function validParticipant(uid) {
+      return request.resource.data.keys().hasOnly(['uid','name','answers','updatedAt'])
+        && request.resource.data.keys().hasAll(['uid','name','answers','updatedAt'])
+        && request.resource.data.uid == uid
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 40
+        && validAnswers(request.resource.data.answers)
+        && request.resource.data.updatedAt == request.time;
+    }
+
+    match /rooms/{roomId} {
+      // Quem conhece um código válido pode consultar apenas o status da turma.
+      allow get: if request.auth != null;
+      allow list: if isTeacher();
+
+      allow create: if isTeacher()
+        && request.resource.data.keys().hasOnly(['createdBy','createdAt','open','revealed','title'])
+        && request.resource.data.keys().hasAll(['createdBy','createdAt','open','revealed','title'])
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.open == true
+        && request.resource.data.revealed == false;
+
+      allow update: if isTeacher()
+        && resource.data.createdBy == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['open','revealed'])
+        && request.resource.data.open is bool
+        && request.resource.data.revealed is bool;
+
+      allow delete: if false;
+
+      match /participants/{uid} {
+        // O instrutor lê todas as respostas; cada aluno vê apenas a própria ficha.
+        allow get: if isTeacher() || (request.auth != null && request.auth.uid == uid);
+        allow list: if isTeacher();
+
+        allow create: if isStudent()
+          && request.auth.uid == uid
+          && get(/databases/$(database)/documents/rooms/$(roomId)).data.open == true
+          && validParticipant(uid);
+
+        allow update: if isStudent()
+          && request.auth.uid == uid
+          && resource.data.uid == uid
+          && get(/databases/$(database)/documents/rooms/$(roomId)).data.open == true
+          && validParticipant(uid);
+
+        allow delete: if false;
+      }
+    }
+
+    // Nenhuma outra coleção tem acesso liberado.
+  }
+}
