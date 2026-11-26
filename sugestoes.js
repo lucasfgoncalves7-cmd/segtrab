@@ -1,9 +1,9 @@
 // Exemplos para comparação didática; não são uma avaliação automática de risco.
 // OBS.: em sites públicos, conteúdo em JavaScript é inspecionável. Não usar como prova sigilosa.
 export const ferramentas = {
-  martelo: {nome:'Martelo', imagem:'assets/martelo_asset.jpg'},
-  chave: {nome:'Chave de fenda', imagem:'assets/chave_asset.jpg'},
-  alicate: {nome:'Alicate universal', imagem:'assets/alicate_asset.jpg'}
+  martelo: {nome:'Martelo', imagem:'martelo_asset.jpg'},
+  chave: {nome:'Chave de fenda', imagem:'chave_asset.jpg'},
+  alicate: {nome:'Alicate universal', imagem:'alicate_asset.jpg'}
 };
 export const sugestoes = {
   martelo: [
