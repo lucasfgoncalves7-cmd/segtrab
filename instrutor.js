@@ -1,5 +1,5 @@
 import { auth, db, configured } from './firebase.js';
-import { ferramentas, sugestoes } from './sugestoes-integradas-v1.js';
+import { ferramentas, sugestoes } from './sugestoes-ilustradas-v2.js';
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js';
 import { doc, collection, setDoc, getDoc, serverTimestamp, onSnapshot, updateDoc } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 
